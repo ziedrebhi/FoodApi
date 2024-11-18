@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace FoodApi
 {
@@ -16,6 +17,11 @@ namespace FoodApi
             foreach (var description in provider.ApiVersionDescriptions)
             {
                 options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
+
+                // using System.Reflection;
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
             }
         }
 
@@ -23,9 +29,19 @@ namespace FoodApi
         {
             var info = new OpenApiInfo()
             {
-                Title = "Sample API",
+                Title = "Food API",
                 Version = description.ApiVersion.ToString(),
-                Description = "A sample application with Swagger, Swashbuckle, and API versioning.",
+                Description = "A sample application with Swagger, Swashbuckle, and API versioning for managing Foods",
+                Contact = new OpenApiContact
+                {
+                    Name = "Example Contact",
+                    Url = new Uri("https://example.com/contact")
+                },
+                License = new OpenApiLicense
+                {
+                    Name = "Example License",
+                    Url = new Uri("https://example.com/license")
+                }
             };
 
             if (description.IsDeprecated)
